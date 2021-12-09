@@ -499,4 +499,37 @@ final class SearchRequestBuilderTest extends TestCase
 
         $this->assertEquals($expected, $actual);
     }
+
+    public function test_search_request_with_point_in_time_can_be_built(): void
+    {
+        $expected = (new SearchRequest($this->matchAllQuery))
+            ->pointInTime([
+                'id' => '46ToAwMDaWR5BXV1',
+                'keep_alive' => '1m',
+            ]);
+
+        $actual = (new SearchRequestBuilder($this->matchAllQuery, new Book()))
+            ->pointInTime('46ToAwMDaWR5BXV1', '1m')
+            ->buildSearchRequest();
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function test_search_request_with_search_after_can_be_built(): void
+    {
+        $expected = (new SearchRequest($this->matchAllQuery))
+            ->searchAfter([
+                '2021-05-20T05:30:04.832Z',
+                4294967298,
+            ]);
+
+        $actual = (new SearchRequestBuilder($this->matchAllQuery, new Book()))
+            ->searchAfter([
+                '2021-05-20T05:30:04.832Z',
+                4294967298,
+            ])
+            ->buildSearchRequest();
+
+        $this->assertEquals($expected, $actual);
+    }
 }

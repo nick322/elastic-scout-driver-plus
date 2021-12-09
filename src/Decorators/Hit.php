@@ -61,6 +61,7 @@ final class Hit implements Arrayable
             'document' => $document->toArray(),
             'highlight' => isset($highlight) ? $highlight->raw() : null,
             'score' => $this->score(),
+            'sort' => $this->sort(),
         ];
     }
 }

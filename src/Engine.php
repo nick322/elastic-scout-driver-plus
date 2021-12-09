@@ -4,6 +4,7 @@ namespace ElasticScoutDriverPlus;
 
 use ElasticAdapter\Documents\DocumentManager;
 use ElasticAdapter\Indices\IndexManager;
+use ElasticAdapter\Search\PointInTimeManager;
 use ElasticAdapter\Search\SearchRequest;
 use ElasticAdapter\Search\SearchResponse;
 use ElasticScoutDriver\Engine as BaseEngine;
@@ -20,6 +21,10 @@ final class Engine extends BaseEngine
      * @var RoutingFactoryInterface
      */
     private $routingFactory;
+    /**
+     * @var PointInTimeManager
+     */
+    private $pointInTimeManager;
 
     public function __construct(
         DocumentManager $documentManager,
@@ -27,11 +32,13 @@ final class Engine extends BaseEngine
         SearchRequestFactoryInterface $searchRequestFactory,
         ModelFactoryInterface $modelFactory,
         IndexManager $indexManager,
-        RoutingFactoryInterface $routingFactory
+        RoutingFactoryInterface $routingFactory,
+        PointInTimeManager $pointInTimeManager
     ) {
         parent::__construct($documentManager, $documentFactory, $searchRequestFactory, $modelFactory, $indexManager);
 
         $this->routingFactory = $routingFactory;
+        $this->pointInTimeManager = $pointInTimeManager;
     }
 
     /**
@@ -73,5 +80,15 @@ final class Engine extends BaseEngine
     {
         $indexName = $modelScope->resolveIndexNames()->join(',');
         return $this->documentManager->search($indexName, $searchRequest);
+    }
+
+    public function createPointInTime(string $indexName, ?string $keepAlive = null): string
+    {
+        return $this->pointInTimeManager->create($indexName, $keepAlive);
+    }
+
+    public function deletePointInTime(string $pointInTimeId): void
+    {
+        $this->pointInTimeManager->delete($pointInTimeId);
     }
 }

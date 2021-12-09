@@ -34,4 +34,21 @@ trait Searchable
     {
         return null;
     }
+
+    public static function createPointInTime(string $keepAlive = null): string
+    {
+        $model = new static();
+        $engine = $model->searchableUsing();
+        $indexName = $model->searchableAs();
+
+        return $engine->createPointInTime($indexName, $keepAlive);
+    }
+
+    public static function deletePointInTime(string $pointInTimeId): void
+    {
+        $model = new static();
+        $engine = $model->searchableUsing();
+
+        $engine->deletePointInTime($pointInTimeId);
+    }
 }

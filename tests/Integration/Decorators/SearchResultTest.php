@@ -37,6 +37,7 @@ final class SearchResultTest extends TestCase
                         '_source' => ['title' => 'foo'],
                         '_score' => 1.1,
                         'highlight' => ['title' => [' <em>foo</em> ']],
+                        'sort' => ['2021-05-20T05:30:04.832Z', 4294967298],
                     ],
                 ],
             ],
@@ -99,5 +100,13 @@ final class SearchResultTest extends TestCase
             $this->assertInstanceOf(Hit::class, $hit);
             $this->assertSame('test', $hit->indexName());
         }
+    }
+
+    public function test_last_sort_can_be_retrieved(): void
+    {
+        $this->assertSame(
+            ['2021-05-20T05:30:04.832Z', 4294967298],
+            $this->searchResult->lastSort()
+        );
     }
 }

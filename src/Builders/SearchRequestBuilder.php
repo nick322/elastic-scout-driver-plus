@@ -86,6 +86,14 @@ class SearchRequestBuilder
      * @var array
      */
     private $indicesBoost = [];
+    /**
+     * @var array|null
+     */
+    private $pointInTime;
+    /**
+     * @var array|null
+     */
+    private $searchAfter;
 
     /**
      * @param Closure|QueryBuilderInterface|array $query
@@ -296,6 +304,23 @@ class SearchRequestBuilder
         return $this;
     }
 
+    public function pointInTime(string $pointInTimeId, string $keepAlive = null): self
+    {
+        $this->pointInTime = ['id' => $pointInTimeId];
+
+        if (isset($keepAlive)) {
+            $this->pointInTime['keep_alive'] = $keepAlive;
+        }
+
+        return $this;
+    }
+
+    public function searchAfter(array $searchAfter): self
+    {
+        $this->searchAfter = $searchAfter;
+        return $this;
+    }
+
     public function buildSearchRequest(): SearchRequest
     {
         $searchRequest = new SearchRequest($this->query);
@@ -354,6 +379,14 @@ class SearchRequestBuilder
 
         if (!empty($this->indicesBoost)) {
             $searchRequest->indicesBoost($this->indicesBoost);
+        }
+
+        if (isset($this->pointInTime)) {
+            $searchRequest->pointInTime($this->pointInTime);
+        }
+
+        if (isset($this->searchAfter)) {
+            $searchRequest->searchAfter($this->searchAfter);
         }
 
         return $searchRequest;

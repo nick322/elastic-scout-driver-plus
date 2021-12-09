@@ -63,6 +63,11 @@ final class SearchResult implements IteratorAggregate
         })->filter()->values();
     }
 
+    public function lastSort(): ?array
+    {
+        return $this->hits()->last()->sort();
+    }
+
     /**
      * @return ArrayIterator<int, Hit>
      */

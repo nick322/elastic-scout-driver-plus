@@ -29,6 +29,7 @@ final class HitTest extends TestCase
             '_source' => ['title' => 'foo'],
             '_score' => 1.1,
             'highlight' => ['title' => [' <em>foo</em> ']],
+            'sort' => ['2021-05-20T05:30:04.832Z', 4294967298],
         ]);
 
         $model = new Book([
@@ -65,6 +66,7 @@ final class HitTest extends TestCase
             'document' => ['id' => '1', 'content' => ['title' => 'foo']],
             'highlight' => ['title' => [' <em>foo</em> ']],
             'score' => 1.1,
+            'sort' => ['2021-05-20T05:30:04.832Z', 4294967298],
         ], $this->hit->toArray());
     }
 }

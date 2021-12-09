@@ -22,7 +22,7 @@ parameters:
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 1
+			count: 3
 			path: tests/App/Model.php
 
 		-

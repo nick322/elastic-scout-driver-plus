@@ -78,4 +78,12 @@ final class EngineTest extends TestCase
         $this->assertCount(1, $found);
         $this->assertEquals($target->toArray(), $found->first()->toArray());
     }
+
+    public function test_point_in_time_can_be_created_and_deleted(): void
+    {
+        $pit = Book::createPointInTime('1m');
+        $this->assertNotNull($pit);
+
+        Book::deletePointInTime($pit);
+    }
 }
