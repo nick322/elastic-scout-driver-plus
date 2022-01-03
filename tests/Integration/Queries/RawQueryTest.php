@@ -522,4 +522,48 @@ final class RawQueryTest extends TestCase
 
         $this->assertFoundModels(collect([$firstTarget, $secondTarget]), $found);
     }
+
+    public function test_models_can_be_found_using_search_after(): void
+    {
+        // create two documents, which should be in the search result
+        $target = factory(Author::class, 2)
+            ->create()
+            ->sortBy('id', SORT_NUMERIC);
+
+        $query = ['match_all' => new stdClass()];
+        $pointInTimeId = Author::createPointInTime('5m');
+
+        // create another document after pit is opened to make sure it won't be present in the search result
+        factory(Author::class)->create();
+
+        $firstResult = Author::searchQuery($query)
+            ->sort('id')
+            ->pointInTime($pointInTimeId)
+            ->size(1)
+            ->execute();
+
+        $this->assertFoundModel($target->get(0), $firstResult);
+
+        $secondResult = Author::searchQuery($query)
+            ->sort('id')
+            ->pointInTime($pointInTimeId)
+            ->searchAfter($firstResult->lastSort())
+            ->size(1)
+            ->execute();
+
+        $this->assertFoundModel($target->get(1), $secondResult);
+
+        // third search should return nothing
+        $thirdResult = Author::searchQuery($query)
+            ->sort('id')
+            ->pointInTime($pointInTimeId)
+            ->searchAfter($secondResult->lastSort())
+            ->size(1)
+            ->execute();
+
+        $this->assertCount(0, $thirdResult);
+
+        // cleanup
+        Author::deletePointInTime($pointInTimeId);
+    }
 }
